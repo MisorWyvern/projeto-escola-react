@@ -1,13 +1,13 @@
 import { Typography } from "@material-ui/core";
-import Axios from "axios";
 import MaterialTable from "material-table";
 import React, { useEffect, useState } from "react";
+import httpService from "../../services/httpService";
 
 function Alunos() {
 	const [alunos, setAlunos] = useState([]);
 
 	useEffect(() => {
-		Axios.get("http://localhost:8080/aluno/?active=true")
+		httpService.get("aluno/?active=true")
 			.then(({ data }) => {
 				setAlunos(data);
 			})
@@ -21,10 +21,18 @@ function Alunos() {
 				Alunos
 			</Typography>
 			<MaterialTable
+            options={
+                {
+                    headerStyle: {
+                        fontWeight: 'bold'
+                    }
+                }
+            }
+            title="Alunos"
 				columns={[
 					{ title: "Nome do Aluno", field: "nome" },
 					{ title: "CPF", field: "cpf" },
-					{ title: "Identificador do Aluno", field: "idPrograma" },
+					{ title: "Identificador do Programa", field: "idPrograma" },
 				]}
 				data={alunos}
 			></MaterialTable>
