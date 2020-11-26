@@ -1,11 +1,13 @@
+import { Fragment } from "react";
+
 const { default: PersistentDrawerRight } = require("./components/PersistentDrawerRight/PersistentDrawerRight");
 
 function App() {
   const drawerTitle = "Projeto Escola React";
   return (
-    <div>
+    <Fragment>
       <PersistentDrawerRight drawerTitle={drawerTitle}/>
-    </div>
+    </Fragment>
   );
 }
 

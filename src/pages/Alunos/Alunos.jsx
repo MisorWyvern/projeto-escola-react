@@ -17,7 +17,7 @@ function Alunos() {
 	}, []);
 	return (
 		<>
-			<Typography variant="h3" component="h3">
+			<Typography variant="h4" component="h3">
 				Alunos
 			</Typography>
 			<MaterialTable
