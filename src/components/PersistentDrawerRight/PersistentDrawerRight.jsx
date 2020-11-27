@@ -11,7 +11,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import {
-  Home,
+	Home,
 	LibraryBooks,
 	Mood,
 	PeopleAlt,
@@ -128,81 +128,61 @@ export default function PersistentDrawerRight(props) {
 					</IconButton>
 				</Toolbar>
 			</AppBar>
-			<Router>
-				<main
-					className={clsx(classes.content, {
-						[classes.contentShift]: open,
-					})}
-				>
-					<div className={classes.drawerHeader} />
-					<Switch>
-						<Route path="/" exact>
-							<HomePage/>
-						</Route>
-						<Route path={linksSuperior[0]}>
-							<Alunos />
-						</Route>
-						<Route path={linksSuperior[1]}></Route>
-						<Route path={linksSuperior[2]}></Route>
-						<Route path={linksInferior[0]}></Route>
-						<Route path={linksInferior[1]}></Route>
-						<Route path={linksInferior[2]}></Route>
-					</Switch>
-				</main>
 
-				<Drawer
-					className={classes.drawer}
-					variant="persistent"
-					anchor="right"
-					open={open}
-					classes={{
-						paper: classes.drawerPaper,
-					}}
-				>
-					<div className={classes.drawerHeader}>
-						<IconButton onClick={handleDrawerClose}>
-							{theme.direction === "rtl" ? (
-								<ChevronLeftIcon />
-							) : (
-								<ChevronRightIcon />
-							)}
-						</IconButton>
-					</div>
-					<Divider />
-          <Link to="/">
-            <List>
-              <ListItem index="0" button key="Home">
-                <ListItemIcon><Home/></ListItemIcon>
-                <ListItemText>Página Inicial</ListItemText>
-              </ListItem>
-            </List>
-          </Link>
-          <Divider />
+			<Drawer
+				className={classes.drawer}
+				variant="persistent"
+				anchor="right"
+				open={open}
+				classes={{
+					paper: classes.drawerPaper,
+				}}
+			>
+				<div className={classes.drawerHeader}>
+					<IconButton onClick={handleDrawerClose}>
+						{theme.direction === "rtl" ? (
+							<ChevronLeftIcon />
+						) : (
+							<ChevronRightIcon />
+						)}
+					</IconButton>
+				</div>
+				<Divider />
+				<Link to="/">
 					<List>
-						{["Alunos", "Mentores", "Programas"].map((text, index) => (
-							<Link to={linksSuperior[index]}>
+						<ListItem index="0" button key="Home">
+							<ListItemIcon>
+								<Home />
+							</ListItemIcon>
+							<ListItemText>Página Inicial</ListItemText>
+						</ListItem>
+					</List>
+				</Link>
+				<Divider />
+				<List>
+					{["Alunos", "Mentores", "Programas"].map((text, index) => (
+						<Link to={linksSuperior[index]}>
+							<ListItem button key={text}>
+								<ListItemIcon>{listaIconesSuperior[index]}</ListItemIcon>
+								<ListItemText primary={text} />
+							</ListItem>
+						</Link>
+					))}
+				</List>
+				<Divider />
+				<List>
+					{["Disciplinas", "Avaliações", "Tipos de Avaliações"].map(
+						(text, index) => (
+							<Link to={linksInferior[index]}>
 								<ListItem button key={text}>
-									<ListItemIcon>{listaIconesSuperior[index]}</ListItemIcon>
+									<ListItemIcon>{listaIconesInferior[index]}</ListItemIcon>
 									<ListItemText primary={text} />
 								</ListItem>
 							</Link>
-						))}
-					</List>
-					<Divider />
-					<List>
-						{["Disciplinas", "Avaliações", "Tipos de Avaliações"].map(
-							(text, index) => (
-								<Link to={linksInferior[index]}>
-									<ListItem button key={text}>
-										<ListItemIcon>{listaIconesInferior[index]}</ListItemIcon>
-										<ListItemText primary={text} />
-									</ListItem>
-								</Link>
-							)
-						)}
-					</List>
-				</Drawer>
-			</Router>
+						)
+					)}
+				</List>
+			</Drawer>
 		</div>
 	);
 }
