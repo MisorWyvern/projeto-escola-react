@@ -14,38 +14,31 @@ import "./index.css";
 
 function Alunos({ icone }) {
 	const [alunos, setAlunos] = useState([]);
-	const [programas, setProgramas] = useState([]);
-	const tituloTabela = "Todos";
+	const [tituloTabela, setTituloTabela] = useState("Todos");
 
 	useEffect(() => {
 		httpService
-			.get("programa")
+			.get("/aluno/?active=true")
 			.then(({ data }) => {
-				setProgramas(data);
+				setAlunos(data);
 			})			
 			.catch((error) => {
 				console.error(error);
 			});
 	}, []);
 
-	useEffect(() => {
-		httpService.get("/aluno/?active=true").then(({ data }) => {
-			console.log(programas);
-			const updatedAlunos = data.map((aluno) => {
-				const programa = programas.find((p) => p.id === aluno.idPrograma);
-				return programa ? { ...aluno, nomePrograma: programa.nome } : aluno;
-			});
-			setAlunos(updatedAlunos);
-		});
-	}, [programas]);
+	console.log(alunos);
+	// useEffect(() => {
+	// 	httpService.get("/aluno/?active=true").then(({ data }) => {
+	// 		console.log(programas);
+	// 		const updatedAlunos = data.map((aluno) => {
+	// 			const programa = programas.find((p) => p.id === aluno.idPrograma);
+	// 			return programa ? { ...aluno, nomePrograma: programa.nome } : aluno;
+	// 		});
+	// 		setAlunos(updatedAlunos);
+	// 	});
+	// }, [programas]);
 
-	console.log(alunos, programas);
-
-	const exemplo = {
-		id: 1,
-		name: "qualquercoisa",
-		nomePrograma: 2,
-	};
 	return (
 		<>
 			<Box component="nav" className="nav-alunos">
@@ -93,9 +86,9 @@ function Alunos({ icone }) {
 				columns={[
 					{ title: "Nome do Aluno", field: "nome" },
 					{ title: "CPF", field: "cpf" },
-					{ title: "Identificador do Programa", field: "nomePrograma" },
+					{ title: "Nome do Programa", field: "nomePrograma" },
 				]}
-				data={alunos}
+				data={alunos.content}
 			></MaterialTable>
 		</>
 	);
