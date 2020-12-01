@@ -1,8 +1,8 @@
 import { Container } from "@material-ui/core";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Fragment } from "react";
-import Alunos from "./pages/Alunos";
 import { Mood } from "@material-ui/icons";
+import { Fragment } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Alunos, { AdicionarAluno } from "./pages/Alunos";
 import HomePage from "./pages/Home";
 
 const {
@@ -15,7 +15,7 @@ function App() {
 		<Fragment>
 			<Router>
 				<PersistentDrawerRight drawerTitle={drawerTitle} />
-				<Container>
+				<Container className="container-switch">
 					<Switch>
 						<Route exact path="/">
 							<HomePage />
