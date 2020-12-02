@@ -18,6 +18,53 @@ function Alunos({ icone }) {
 
 	console.log(alunos);
 
+	function buscarAlunos(active, page = 0, pageSize = 10) {
+
+		if (active === undefined || active === null) {
+			httpService
+				.get("aluno", { params: {page, size: pageSize }})
+				.then(({ data }) => {
+					setAlunos(data);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+			return;
+		} else if (active === false) {
+			httpService
+				.get(`/aluno/?active=false&page=${page}&size=${pageSize}`)
+				.then(({ data }) => {
+					setAlunos(data);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+			return;
+		} else {
+			httpService
+				.get(`/aluno/?active=true&page=${page}&size=${pageSize}`)
+				.then(({ data }) => {
+					setAlunos(data);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+		}
+	}
+
+	function deletarAluno(idAluno) {
+		httpService.delete(`aluno/${idAluno}`)
+		.then( () => {
+			const updatedAlunos = alunos.content.filter((aluno) => {
+				return aluno.id !== idAluno;
+			})
+			setAlunos({...alunos, content: updatedAlunos});
+		})
+			.catch((error) => {
+			console.error(error.message);
+		});
+	}
+
 	return (
 		<>
 			<Switch>
@@ -89,6 +136,7 @@ function Alunos({ icone }) {
 					<MaterialTable
 						className="table-alunos"
 						options={{
+							actionsColumnIndex: -1,
 							headerStyle: {
 								fontWeight: "bold",
 							},
@@ -101,6 +149,32 @@ function Alunos({ icone }) {
 							{ title: "Nome do Programa", field: "nomePrograma" },
 						]}
 						data={alunos.content}
+						actions={[
+							{
+								icon: "edit",
+								tooltip: "Editar Aluno",
+								onClick: (event, rowData) => {
+									alert("Voce editou " + rowData.nome);
+								},
+							},
+							(rowData) => ({
+								icon: "delete",
+								tooltip: "Deletar Aluno",
+								disabled: tituloTabela === "Alunos Inativos",
+								onClick: (event, rowData) => {
+									let deleteAluno = window.confirm(
+										`Tem certeza que deseja excluir "${rowData.nome}"?`
+									);
+									if (deleteAluno) {
+										deletarAluno(rowData.id);
+										
+									} else {
+										alert("Exclusão cancelada!");
+									}
+									
+								},
+							}),
+						]}
 					></MaterialTable>
 				</Route>
 				<Route path={`${path}/adicionar-aluno`}>
@@ -109,39 +183,6 @@ function Alunos({ icone }) {
 			</Switch>
 		</>
 	);
-
-	function buscarAlunos(active) {
-		if (active === undefined || active === null) {
-			httpService
-				.get("/aluno")
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-			return;
-		} else if (active === false) {
-			httpService
-				.get("/aluno/?active=false")
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-			return;
-		} else {
-			httpService
-				.get("/aluno/?active=true")
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-		}
-	}
 }
 
 export default Alunos;

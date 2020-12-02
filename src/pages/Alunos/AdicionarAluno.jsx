@@ -42,6 +42,32 @@ function AdicionarAluno() {
 
 		setOpenSnack(false);
 	};
+
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		if (nomeAluno === "" || cpf === "" || idPrograma === "") {
+			return;
+		}
+
+		httpService
+			.post("/aluno", {
+				nome: nomeAluno,
+				cpf: cpf,
+				idPrograma: idPrograma,
+			})
+			.then((response) => {
+				setSnackSeverity("success");
+				setSnackMessage(response.status + " - Aluno criado com sucesso!");
+				setOpenSnack(true);
+				setNomeAluno("");
+				setCpf("");
+				setIdPrograma("");									})
+			.catch((error) => {
+				setSnackSeverity("error");
+				setSnackMessage(error.message);
+				setOpenSnack(true);
+			});
+	}
 	return (
 		<Box>
 			<Switch>
@@ -69,31 +95,7 @@ function AdicionarAluno() {
 					<Container maxWidth="sm">
 						<form
 							action=""
-							onSubmit={(event) => {
-								event.preventDefault();
-								if (nomeAluno === "" || cpf === "" || idPrograma === "") {
-									return;
-								}
-
-								httpService
-									.post("/aluno", {
-										nome: nomeAluno,
-										cpf: cpf,
-										idPrograma: idPrograma,
-									})
-									.then((response) => {
-                                        setSnackSeverity("success");
-										setSnackMessage(response.status + " - Aluno criado com sucesso!");
-                                        setOpenSnack(true);
-                                        setNomeAluno("");
-                                        setCpf("");
-                                        setIdPrograma("");									})
-									.catch((error) => {
-                                        setSnackSeverity("error");
-                                        setSnackMessage(error.message);
-										setOpenSnack(true);
-									});
-							}}
+							onSubmit={handleSubmit}
 						>
 							<TextField
 								required
