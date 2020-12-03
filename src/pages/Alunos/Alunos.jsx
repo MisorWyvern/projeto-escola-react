@@ -1,13 +1,14 @@
 import { Box, Button, Grid, Typography } from "@material-ui/core";
-import {
-	People,
-	Person,
-	PersonAdd,
-	PersonOutline
-} from "@material-ui/icons";
+import { People, Person, PersonAdd, PersonOutline } from "@material-ui/icons";
 import MaterialTable from "material-table";
 import React, { useEffect, useState } from "react";
-import { Link, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import {
+	Link,
+	Route,
+	Switch,
+	useHistory,
+	useRouteMatch,
+} from "react-router-dom";
 import httpService from "../../services/httpService";
 import AdicionarAluno from "./AdicionarAluno";
 import EditarAluno from "./EditarAluno";
@@ -16,16 +17,23 @@ import "./index.css";
 function Alunos({ icone }) {
 	const [alunos, setAlunos] = useState([]);
 	const [tituloTabela, setTituloTabela] = useState("Alunos Ativos");
+	const [active, setActive] = useState(true);
+	const [lastActive, setLastActive] = useState(true);
 	let { url, path } = useRouteMatch();
 	let history = useHistory();
+	const tableRef = React.createRef();
 
 	useEffect(() => {
 		buscarAlunos(true);
 	}, []);
 
+	useEffect(() => tableRef.current && tableRef.current.onQueryChange(), [
+		active,
+	]);
+
 	console.log(alunos);
 
-	function buscarAlunos(active, page = 0, pageSize = 10) {
+	function buscarAlunos(active = null, page = 0, pageSize = 10) {
 		if (active === undefined || active === null) {
 			httpService
 				.get("aluno", { params: { page, size: pageSize } })
@@ -36,7 +44,9 @@ function Alunos({ icone }) {
 					console.error(error);
 				});
 			return;
-		} else if (active === false) {
+		}
+
+		if (active === false) {
 			httpService
 				.get(`/aluno/?active=false&page=${page}&size=${pageSize}`)
 				.then(({ data }) => {
@@ -46,16 +56,16 @@ function Alunos({ icone }) {
 					console.error(error);
 				});
 			return;
-		} else {
-			httpService
-				.get(`/aluno/?active=true&page=${page}&size=${pageSize}`)
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
 		}
+
+		httpService
+			.get(`/aluno/?active=true&page=${page}&size=${pageSize}`)
+			.then(({ data }) => {
+				setAlunos(data);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	}
 
 	function deletarAluno(idAluno) {
@@ -118,7 +128,7 @@ function Alunos({ icone }) {
 									startIcon={<Person />}
 									onClick={() => {
 										setTituloTabela("Alunos Ativos");
-										buscarAlunos(true);
+										setActive(true);
 									}}
 								>
 									Mostrar Apenas Ativos
@@ -132,7 +142,7 @@ function Alunos({ icone }) {
 									startIcon={<PersonOutline />}
 									onClick={() => {
 										setTituloTabela("Alunos Inativos");
-										buscarAlunos(false);
+										setActive(false);
 									}}
 								>
 									Mostrar Apenas Inativos
@@ -146,7 +156,7 @@ function Alunos({ icone }) {
 									startIcon={<People />}
 									onClick={() => {
 										setTituloTabela("Todos Alunos");
-										buscarAlunos();
+										setActive(null);
 									}}
 								>
 									Mostrar Todos Alunos
@@ -155,6 +165,7 @@ function Alunos({ icone }) {
 						</Grid>
 					</Box>
 					<MaterialTable
+						tableRef={tableRef}
 						className="table-alunos"
 						options={{
 							actionsColumnIndex: -1,
@@ -169,13 +180,33 @@ function Alunos({ icone }) {
 							{ title: "CPF", field: "cpf" },
 							{ title: "Nome do Programa", field: "nomePrograma" },
 						]}
-						data={alunos.content}
+						data={(query) =>
+							new Promise((resolve, reject) => {
+								httpService
+									.get("/aluno", {
+										params: {
+											active: active,
+											page:
+												lastActive !== active ? (query.page = 0) : query.page,
+											size: query.pageSize,
+										},
+									})
+									.then(({ data }) => {
+										resolve({
+											data: data.content,
+											page: data.pageable.pageNumber,
+											totalCount: data.totalElements,
+										});
+										setLastActive(active);
+									});
+							})
+						}
 						actions={[
 							{
 								icon: "edit",
 								tooltip: "Editar Aluno",
 								onClick: (event, rowData) => {
-									history.push(`${path}/editar-aluno/${rowData.id}`)
+									history.push(`${path}/editar-aluno/${rowData.id}`);
 								},
 							},
 							{
@@ -215,7 +246,7 @@ function Alunos({ icone }) {
 								},
 							},
 						]}
-					></MaterialTable> 
+					></MaterialTable>
 				</Route>
 				<Route path={`${path}/adicionar-aluno`} component={AdicionarAluno} />
 				<Route path={`${path}/editar-aluno/:idAluno`} component={EditarAluno} />
