@@ -1,16 +1,24 @@
-import { Box, Button, Grid, Typography } from "@material-ui/core";
-import { People, Person, PersonAdd, PersonOutline } from "@material-ui/icons";
-import MaterialTable from "material-table";
+import { Box, Button, Grid, IconButton, Typography } from "@material-ui/core";
+import {
+	Edit,
+	People,
+	Person,
+	PersonAdd,
+	PersonOutline,
+} from "@material-ui/icons";
+import MaterialTable, {MTableAction} from "material-table";
 import React, { useEffect, useState } from "react";
-import { Link, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Link, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import AdicionarAluno from "./AdicionarAluno";
 import httpService from "../../services/httpService";
 import "./index.css";
+import EditarAluno from "./EditarAluno";
 
 function Alunos({ icone }) {
 	const [alunos, setAlunos] = useState([]);
 	const [tituloTabela, setTituloTabela] = useState("Alunos Ativos");
 	let { url, path } = useRouteMatch();
+	let history = useHistory();
 
 	useEffect(() => {
 		buscarAlunos(true);
@@ -19,10 +27,9 @@ function Alunos({ icone }) {
 	console.log(alunos);
 
 	function buscarAlunos(active, page = 0, pageSize = 10) {
-
 		if (active === undefined || active === null) {
 			httpService
-				.get("aluno", { params: {page, size: pageSize }})
+				.get("aluno", { params: { page, size: pageSize } })
 				.then(({ data }) => {
 					setAlunos(data);
 				})
@@ -53,17 +60,32 @@ function Alunos({ icone }) {
 	}
 
 	function deletarAluno(idAluno) {
-		httpService.delete(`aluno/${idAluno}`)
-		.then( () => {
-			const updatedAlunos = alunos.content.filter((aluno) => {
-				return aluno.id !== idAluno;
+		httpService
+			.delete(`aluno/${idAluno}`)
+			.then(() => {
+				const updatedAlunos = alunos.content.filter((aluno) => {
+					return aluno.id !== idAluno;
+				});
+				setAlunos({ ...alunos, content: updatedAlunos });
 			})
-			setAlunos({...alunos, content: updatedAlunos});
-		})
 			.catch((error) => {
-			console.error(error.message);
-		});
+				console.error(error.message);
+			});
 	}
+
+	const activateAluno = (idAluno) => {
+		httpService
+			.put(`aluno/activate/${idAluno}`)
+			.then(() => {
+				let updatedAlunos = alunos.content.filter((aluno) => {
+					return aluno.id !== idAluno;
+				});
+				setAlunos({ ...alunos, content: updatedAlunos });
+			})
+			.catch((error) => {
+				console.error(error.message);
+			});
+	};
 
 	return (
 		<>
@@ -94,13 +116,13 @@ function Alunos({ icone }) {
 									variant="contained"
 									color="primary"
 									fullWidth
-									startIcon={<People />}
+									startIcon={<Person />}
 									onClick={() => {
-										setTituloTabela("Todos Alunos");
-										buscarAlunos();
+										setTituloTabela("Alunos Ativos");
+										buscarAlunos(true);
 									}}
 								>
-									Mostrar Todos Alunos
+									Mostrar Apenas Ativos
 								</Button>
 							</Grid>
 							<Grid item xs={6} sm={3}>
@@ -122,13 +144,13 @@ function Alunos({ icone }) {
 									variant="contained"
 									color="primary"
 									fullWidth
-									startIcon={<Person />}
+									startIcon={<People />}
 									onClick={() => {
-										setTituloTabela("Alunos Ativos");
-										buscarAlunos(true);
+										setTituloTabela("Todos Alunos");
+										buscarAlunos();
 									}}
 								>
-									Mostrar Apenas Ativos
+									Mostrar Todos Alunos
 								</Button>
 							</Grid>
 						</Grid>
@@ -154,32 +176,57 @@ function Alunos({ icone }) {
 								icon: "edit",
 								tooltip: "Editar Aluno",
 								onClick: (event, rowData) => {
-									alert("Voce editou " + rowData.nome);
+									history.push(`${path}/editar-aluno/${rowData.id}`)
 								},
 							},
-							(rowData) => ({
+							{
 								icon: "delete",
 								tooltip: "Deletar Aluno",
-								disabled: tituloTabela === "Alunos Inativos",
+								hidden: tituloTabela === "Alunos Inativos",
 								onClick: (event, rowData) => {
 									let deleteAluno = window.confirm(
 										`Tem certeza que deseja excluir "${rowData.nome}"?`
 									);
-									if (deleteAluno) {
-										deletarAluno(rowData.id);
-										
-									} else {
+
+									if (!deleteAluno) {
 										alert("Exclusão cancelada!");
+										return;
 									}
-									
+
+									deletarAluno(rowData.id);
+									alert("Aluno excluido com sucesso!");
 								},
-							}),
+							},
+							{
+								icon: "person_add",
+								tooltip: "Reativar Aluno",
+								hidden: tituloTabela !== "Alunos Inativos",
+								onClick: (event, rowData) => {
+									let reativarAluno = window.confirm(
+										`Tem certeza que deseja reativar "${rowData.nome}"?`
+									);
+
+									if (!reativarAluno) {
+										alert("Reativação cancelada!");
+										return;
+									}
+
+									activateAluno(rowData.id);
+									alert(`Aluno "${rowData.nome}" reativado com sucesso!`);
+								},
+							},
 						]}
-					></MaterialTable>
+						// components={{
+						// 	Action: props => (
+						// 		<Link to={`${url}/editar-aluno/${props.data}`}>
+						// 			<MTableAction {...props} />
+						// 		</Link>
+						// 	),
+						//   }}
+					></MaterialTable> 
 				</Route>
-				<Route path={`${path}/adicionar-aluno`}>
-					<AdicionarAluno />
-				</Route>
+				<Route path={`${path}/adicionar-aluno`} component={AdicionarAluno} />
+				<Route path={`${path}/editar-aluno/:idAluno`} component={EditarAluno} />
 			</Switch>
 		</>
 	);

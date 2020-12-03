@@ -2,7 +2,7 @@ import { Container } from "@material-ui/core";
 import { Mood } from "@material-ui/icons";
 import { Fragment } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Alunos, { AdicionarAluno } from "./pages/Alunos";
+import Alunos from "./pages/Alunos";
 import HomePage from "./pages/Home";
 
 const {
