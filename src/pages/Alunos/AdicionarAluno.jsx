@@ -13,6 +13,7 @@ import {
 	Snackbar,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import BotaoVoltar from "../../components/BotaoVoltar";
 
 function AdicionarAluno() {
 	const [nomeAluno, setNomeAluno] = useState("");
@@ -20,8 +21,8 @@ function AdicionarAluno() {
 	const [programas, setProgramas] = useState([]);
 	const [idPrograma, setIdPrograma] = useState("");
 	const [openSnack, setOpenSnack] = useState(false);
-    const [snackMessage, setSnackMessage] = useState("");
-    const [snackSeverity, setSnackSeverity] = useState("success");
+	const [snackMessage, setSnackMessage] = useState("");
+	const [snackSeverity, setSnackSeverity] = useState("success");
 	let match = useRouteMatch();
 
 	useEffect(() => {
@@ -61,19 +62,20 @@ function AdicionarAluno() {
 				setOpenSnack(true);
 				setNomeAluno("");
 				setCpf("");
-				setIdPrograma("");									})
+				setIdPrograma("");
+			})
 			.catch((error) => {
 				setSnackSeverity("error");
 				setSnackMessage(error.message);
 				setOpenSnack(true);
 			});
-	}
+	};
 	return (
 		<Box>
 			<Switch>
 				<Route exact path={`${match.path}`}>
 					<Snackbar
-                        anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+						anchorOrigin={{ vertical: "top", horizontal: "center" }}
 						fullWidth
 						open={openSnack}
 						autoHideDuration={6000}
@@ -84,19 +86,14 @@ function AdicionarAluno() {
 						</Alert>
 					</Snackbar>
 					<Link to="/alunos">
-						<Typography component="body1" variant="h5">
-							Voltar
-						</Typography>
+						<BotaoVoltar/>
 					</Link>
 					<Typography component="h3" variant="h4" align="center">
 						Adicionar um novo Aluno
 					</Typography>
 
 					<Container maxWidth="sm">
-						<form
-							action=""
-							onSubmit={handleSubmit}
-						>
+						<form action="" onSubmit={handleSubmit}>
 							<TextField
 								required
 								variant="outlined"

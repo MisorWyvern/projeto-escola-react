@@ -19,6 +19,7 @@ import {
 	Snackbar,
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
+import BotaoVoltar from "../../components/BotaoVoltar";
 
 function EditarAluno() {
 	const [aluno, setAluno] = useState({
@@ -109,9 +110,7 @@ function EditarAluno() {
 						</Alert>
 					</Snackbar>
 					<Link to="/alunos">
-						<Typography component="body1" variant="h5">
-							Voltar
-						</Typography>
+						<BotaoVoltar/>
 					</Link>
 					<Typography component="h3" variant="h4" align="center">
 						Editar Aluno "{titulo}"
