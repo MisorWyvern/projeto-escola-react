@@ -1,18 +1,17 @@
-import { Box, Button, Grid, IconButton, Typography } from "@material-ui/core";
+import { Box, Button, Grid, Typography } from "@material-ui/core";
 import {
-	Edit,
 	People,
 	Person,
 	PersonAdd,
-	PersonOutline,
+	PersonOutline
 } from "@material-ui/icons";
-import MaterialTable, {MTableAction} from "material-table";
+import MaterialTable from "material-table";
 import React, { useEffect, useState } from "react";
 import { Link, Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import AdicionarAluno from "./AdicionarAluno";
 import httpService from "../../services/httpService";
-import "./index.css";
+import AdicionarAluno from "./AdicionarAluno";
 import EditarAluno from "./EditarAluno";
+import "./index.css";
 
 function Alunos({ icone }) {
 	const [alunos, setAlunos] = useState([]);
@@ -216,13 +215,6 @@ function Alunos({ icone }) {
 								},
 							},
 						]}
-						// components={{
-						// 	Action: props => (
-						// 		<Link to={`${url}/editar-aluno/${props.data}`}>
-						// 			<MTableAction {...props} />
-						// 		</Link>
-						// 	),
-						//   }}
 					></MaterialTable> 
 				</Route>
 				<Route path={`${path}/adicionar-aluno`} component={AdicionarAluno} />
