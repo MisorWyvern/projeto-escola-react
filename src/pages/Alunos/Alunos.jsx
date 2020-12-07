@@ -15,67 +15,35 @@ import EditarAluno from "./EditarAluno";
 import "./index.css";
 
 function Alunos({ icone }) {
-	const [alunos, setAlunos] = useState([]);
 	const [tituloTabela, setTituloTabela] = useState("Alunos Ativos");
 	const [active, setActive] = useState(true);
 	const [lastActive, setLastActive] = useState(true);
 	let { url, path } = useRouteMatch();
 	let history = useHistory();
 	const tableRef = React.createRef();
+	const atualizarTabela = () => {
+		tableRef.current && tableRef.current.onQueryChange();
+	};
 
-	useEffect(() => {
-		buscarAlunos(true);
-	}, []);
-
-	useEffect(() => tableRef.current && tableRef.current.onQueryChange(), [
+	/*
+	useEffect(() => atualizarTabela(), [
 		active,
 	]);
+	*/
+	
 
-	console.log(alunos);
-
-	function buscarAlunos(active = null, page = 0, pageSize = 10) {
-		if (active === undefined || active === null) {
-			httpService
-				.get("aluno", { params: { page, size: pageSize } })
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-			return;
-		}
-
-		if (active === false) {
-			httpService
-				.get(`/aluno/?active=false&page=${page}&size=${pageSize}`)
-				.then(({ data }) => {
-					setAlunos(data);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-			return;
-		}
-
-		httpService
-			.get(`/aluno/?active=true&page=${page}&size=${pageSize}`)
-			.then(({ data }) => {
-				setAlunos(data);
-			})
-			.catch((error) => {
-				console.error(error);
-			});
+	function buscarAlunos(page = 0, pageSize = 10) {
+		return httpService.get("aluno/", {
+			params: { page, size: pageSize, active },
+		});
 	}
 
 	function deletarAluno(idAluno) {
 		httpService
 			.delete(`aluno/${idAluno}`)
 			.then(() => {
-				const updatedAlunos = alunos.content.filter((aluno) => {
-					return aluno.id !== idAluno;
-				});
-				setAlunos({ ...alunos, content: updatedAlunos });
+				atualizarTabela();
+				//console.log(tableRef.current.state.data.filter((aluno) => aluno.id !== idAluno));
 			})
 			.catch((error) => {
 				console.error(error.message);
@@ -84,12 +52,9 @@ function Alunos({ icone }) {
 
 	const activateAluno = (idAluno) => {
 		httpService
-			.put(`aluno/activate/${idAluno}`)
+			.put("aluno/activate/" + idAluno)
 			.then(() => {
-				let updatedAlunos = alunos.content.filter((aluno) => {
-					return aluno.id !== idAluno;
-				});
-				setAlunos({ ...alunos, content: updatedAlunos });
+				atualizarTabela();
 			})
 			.catch((error) => {
 				console.error(error.message);
@@ -129,6 +94,7 @@ function Alunos({ icone }) {
 									onClick={() => {
 										setTituloTabela("Alunos Ativos");
 										setActive(true);
+										atualizarTabela();
 									}}
 								>
 									Mostrar Apenas Ativos
@@ -143,6 +109,7 @@ function Alunos({ icone }) {
 									onClick={() => {
 										setTituloTabela("Alunos Inativos");
 										setActive(false);
+										atualizarTabela();
 									}}
 								>
 									Mostrar Apenas Inativos
@@ -157,6 +124,7 @@ function Alunos({ icone }) {
 									onClick={() => {
 										setTituloTabela("Todos Alunos");
 										setActive(null);
+										atualizarTabela();
 									}}
 								>
 									Mostrar Todos Alunos
@@ -182,15 +150,8 @@ function Alunos({ icone }) {
 						]}
 						data={(query) =>
 							new Promise((resolve, reject) => {
-								httpService
-									.get("/aluno", {
-										params: {
-											active: active,
-											page:
-												lastActive !== active ? (query.page = 0) : query.page,
-											size: query.pageSize,
-										},
-									})
+								let page = lastActive !== active ? 0 : query.page;
+								buscarAlunos(page, query.pageSize)
 									.then(({ data }) => {
 										resolve({
 											data: data.content,
@@ -198,6 +159,9 @@ function Alunos({ icone }) {
 											totalCount: data.totalElements,
 										});
 										setLastActive(active);
+									})
+									.catch((error) => {
+										console.error(error.message);
 									});
 							})
 						}
@@ -224,7 +188,7 @@ function Alunos({ icone }) {
 									}
 
 									deletarAluno(rowData.id);
-									alert("Aluno excluido com sucesso!");
+									alert("Aluno " + rowData.nome + " excluido com sucesso!");
 								},
 							},
 							{

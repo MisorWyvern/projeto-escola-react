@@ -23,7 +23,9 @@ function AdicionarAluno() {
 	const [openSnack, setOpenSnack] = useState(false);
 	const [snackMessage, setSnackMessage] = useState("");
 	const [snackSeverity, setSnackSeverity] = useState("success");
+	const cpfRegex = new RegExp("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
 	let match = useRouteMatch();
+	
 
 	useEffect(() => {
 		httpService
@@ -47,6 +49,10 @@ function AdicionarAluno() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		if (nomeAluno === "" || cpf === "" || idPrograma === "") {
+			return;
+		}
+
+		if(!(cpfRegex.test(cpf))){
 			return;
 		}
 
@@ -107,12 +113,14 @@ function AdicionarAluno() {
 								label="Nome do Aluno"
 							/>
 							<TextField
+							
 								required
 								variant="outlined"
 								margin="normal"
 								fullWidth
 								value={cpf}
 								label="CPF"
+								placeholder="Ex: 000.000.000-00"
 								onChange={(event) => {
 									setCpf(event.target.value);
 								}}

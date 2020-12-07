@@ -36,6 +36,7 @@ function EditarAluno() {
 	const [snackSeverity, setSnackSeverity] = useState("success");
 	let match = useRouteMatch();
 	const { idAluno } = useParams();
+	const cpfRegex = new RegExp("[0-9]{3}[.][0-9]{3}[.][0-9]{3}[-][0-9]{2}");
 
 	useEffect(() => {
 		httpService
@@ -73,6 +74,10 @@ function EditarAluno() {
 	const handleSubmit = (event) => {
 		event.preventDefault();
 		if (aluno.nome === "" || aluno.cpf === "" || aluno.idPrograma === "") {
+			return;
+		}
+
+		if(!(cpfRegex.test(aluno.cpf))){
 			return;
 		}
 
