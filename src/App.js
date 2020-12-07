@@ -4,13 +4,14 @@ import { Fragment } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Alunos from "./pages/Alunos";
 import HomePage from "./pages/Home";
+import Programas from "./pages/Programas";
 
 const {
 	default: PersistentDrawerRight,
 } = require("./components/PersistentDrawerRight/PersistentDrawerRight");
 
 function App() {
-  const drawerTitle = "Projeto Escola React";
+	const drawerTitle = "Projeto Escola React";
 	return (
 		<Fragment>
 			<Router>
@@ -21,13 +22,15 @@ function App() {
 							<HomePage />
 						</Route>
 						<Route path="/alunos">
-							<Alunos icone={<Mood/>} />
+							<Alunos icone={<Mood />} />
 						</Route>
-						<Route path=""></Route>
-						<Route path=""></Route>
-						<Route path=""></Route>
-						<Route path=""></Route>
-						<Route path=""></Route>
+						<Route path="/mentores"></Route>
+						<Route path="/programas">
+							<Programas />
+						</Route>
+						<Route path="/disciplinas"></Route>
+						<Route path="/avaliacoes"></Route>
+						<Route path="/tipos-de-avaliacoes"></Route>
 					</Switch>
 				</Container>
 			</Router>

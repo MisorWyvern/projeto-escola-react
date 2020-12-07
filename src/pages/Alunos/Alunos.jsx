@@ -1,13 +1,13 @@
 import { Box, Button, Grid, Typography } from "@material-ui/core";
 import { People, Person, PersonAdd, PersonOutline } from "@material-ui/icons";
 import MaterialTable from "material-table";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	Link,
 	Route,
 	Switch,
 	useHistory,
-	useRouteMatch,
+	useRouteMatch
 } from "react-router-dom";
 import httpService from "../../services/httpService";
 import AdicionarAluno from "./AdicionarAluno";
