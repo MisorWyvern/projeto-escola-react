@@ -1,47 +1,53 @@
 import {
 	Button,
 	ButtonGroup,
-	Icon,
 	IconButton,
 	Paper,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
+	TableFooter,
 	TableHead,
+	TablePagination,
 	TableRow,
 	Typography,
 } from "@material-ui/core";
 import { Delete, Edit } from "@material-ui/icons";
 import { useEffect, useState } from "react";
-import {
-	Link,
-	Route,
-	Switch,
-	useHistory,
-	useRouteMatch,
-} from "react-router-dom";
+import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import httpService from "../../services/httpService";
 import EditarPrograma from "./EditarPrograma";
 
 function Programas() {
 	const [programas, setProgramas] = useState({ content: [] });
-    const history = useHistory();
-    let { url, path } = useRouteMatch();
+	const history = useHistory();
+	let { url, path } = useRouteMatch();
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(5);
 
 	useEffect(() => {
 		buscarProgramas();
 	}, []);
 
+	const handleChangePage = (event, newPage) => {
+		setPage(newPage);
+		buscarProgramas(page, rowsPerPage);
+	};
+
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(+event.target.value);
+		setPage(0);
+		buscarProgramas(page, rowsPerPage);
+	};
+
 	console.log(programas);
 
-    const handleDelete = (idPrograma) => {
-        
-    }
+	const handleDelete = (idPrograma) => {};
 
-    const handleEdit = (idPrograma) => {
-        history.push(`${path}/editar-programa/${idPrograma}`)
-    }
+	const handleEdit = (idPrograma) => {
+		history.push(`${path}/editar-programa/${idPrograma}`);
+	};
 
 	function buscarProgramas(page = 0, pageSize = 5) {
 		httpService
@@ -54,7 +60,7 @@ function Programas() {
 			.catch((error) => {
 				console.error(error.message);
 			});
-    }   
+	}
 
 	return (
 		<Switch>
@@ -66,8 +72,8 @@ function Programas() {
 					fullWidth
 				>
 					<Button>Adicionar Programa</Button>
-					<Button>Editar Programa</Button>
-					<Button>Remover Programa</Button>
+					<Button>????</Button>
+					<Button>????</Button>
 				</ButtonGroup>
 
 				<TableContainer component={Paper}>
@@ -93,12 +99,17 @@ function Programas() {
 										<TableCell component="td">{prog.dataInicio}</TableCell>
 										<TableCell component="td">{prog.dataTermino}</TableCell>
 										<TableCell
+											aria-label="Editar Programa"
 											component="td"
 											style={{ width: 48, paddingLeft: 6, paddingRight: 6 }}
 											align="right"
 											size="small"
 										>
-											<IconButton onClick={() => {handleEdit(prog.id)}}>
+											<IconButton
+												onClick={() => {
+													handleEdit(prog.id);
+												}}
+											>
 												<Edit />
 											</IconButton>
 										</TableCell>
@@ -108,7 +119,12 @@ function Programas() {
 											align="right"
 											size="small"
 										>
-											<IconButton onClick={() => {handleDelete(prog.id)}}>
+											<IconButton
+												aria-label="Deletar Programa"
+												onClick={() => {
+													handleDelete(prog.id);
+												}}
+											>
 												<Delete />
 											</IconButton>
 										</TableCell>
@@ -116,10 +132,27 @@ function Programas() {
 								);
 							})}
 						</TableBody>
+						<TableFooter>
+							<TableRow>
+								<TablePagination
+									rowsPerPageOptions={[5, 10]}
+									colSpan={5}
+									count={programas.numberOfElements}
+									rowsPerPage={rowsPerPage}
+									page={page}
+									onChangePage={handleChangePage}
+									onChangeRowsPerPage={handleChangeRowsPerPage}
+								/>
+							</TableRow>
+						</TableFooter>
 					</Table>
 				</TableContainer>
 			</Route>
-            <Route path={`${path}/editar-programa/:idPrograma`} component={EditarPrograma} />
+			<Route
+				path={`${path}/editar-programa/:idPrograma`}
+				component={EditarPrograma}
+			/>
+			<Route path={`${path}/adicionar-programa`} />
 		</Switch>
 	);
 }
