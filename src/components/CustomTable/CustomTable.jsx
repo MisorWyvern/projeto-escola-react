@@ -1,25 +1,40 @@
-import { Table, TableContainer, TableHead, TableRow, Paper, TableCell, Typography, TableBody, TableFooter, TablePagination, IconButton } from "@material-ui/core";
+import {
+	Table,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Paper,
+	TableCell,
+	Typography,
+	TableBody,
+	TableFooter,
+	TablePagination,
+	IconButton,
+} from "@material-ui/core";
 
-function CustomTable({ columns, content, actions, numberOfElements, rowsPerPage, page, onChangePage, onChangeRowsPerPage }) {
-    
-    
-    return (
+function CustomTable({
+	columns,
+	content,
+	actions,
+	numberOfElements,
+	rowsPerPage,
+	page,
+	onChangePage,
+	onChangeRowsPerPage,
+}) {
+	return (
 		<TableContainer component={Paper}>
 			<Table aria-label="Custom Table">
 				<TableHead>
 					<TableRow>
 						{columns.map((column, index) => {
 							return (
-								<TableCell
-									colSpan={index === columns.length - 1 ? 1 + actions.length : 1}
-									component="th"
-								>
-									<Typography variant="subtitle1">
-										{column.title}
-									</Typography>
+								<TableCell component="th">
+									<Typography variant="subtitle1">{column.title}</Typography>
 								</TableCell>
 							);
 						})}
+						{actions.length > 0 ? <TableCell colSpan={actions.length} /> : ""}
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -27,23 +42,23 @@ function CustomTable({ columns, content, actions, numberOfElements, rowsPerPage,
 						return (
 							<TableRow key={obj.id}>
 								{columns.map((column) => {
-									return <TableCell component="td">{obj[column.field]}</TableCell>;
+									return (
+										<TableCell component="td">{obj[column.field]}</TableCell>
+									);
 								})}
-								{actions.map((acao, index) => 
+								{actions.map((acao, index) => (
 									<TableCell
 										aria-label={acao.tooltip}
 										component="td"
 										style={{ width: 48, paddingLeft: 6, paddingRight: 6 }}
 										align="right"
 										size="small"
-                                        >
-										<IconButton
-                                        onClick={() => acao.onClick(obj)}
-										>
+									>
+										<IconButton onClick={() => acao.onClick(obj)}>
 											{acao.icone}
 										</IconButton>
 									</TableCell>
-								)}
+								))}
 							</TableRow>
 						);
 					})}
