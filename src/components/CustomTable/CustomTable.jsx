@@ -1,4 +1,4 @@
-import { Table, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Table, TableContainer, TableHead, TableRow, Paper, TableCell, Typography, TableBody, TableFooter, TablePagination, IconButton } from "@material-ui/core";
 
 function CustomTable({ columns, content, actions, numberOfElements, rowsPerPage, page, onChangePage, onChangeRowsPerPage }) {
     
@@ -8,14 +8,14 @@ function CustomTable({ columns, content, actions, numberOfElements, rowsPerPage,
 			<Table aria-label="Custom Table">
 				<TableHead>
 					<TableRow>
-						{headers.map((index) => {
+						{columns.map((column, index) => {
 							return (
 								<TableCell
-									colSpan={index === headers.length - 1 ? 1 + actions.length : 1}
+									colSpan={index === columns.length - 1 ? 1 + actions.length : 1}
 									component="th"
 								>
 									<Typography variant="subtitle1">
-										${columns.title[index]}
+										{column.title}
 									</Typography>
 								</TableCell>
 							);
@@ -26,26 +26,24 @@ function CustomTable({ columns, content, actions, numberOfElements, rowsPerPage,
 					{content.map((obj) => {
 						return (
 							<TableRow key={obj.id}>
-								{columns.field.map((field) => {
-									return <TableCell component="td">{obj[field]}</TableCell>;
+								{columns.map((column) => {
+									return <TableCell component="td">{obj[column.field]}</TableCell>;
 								})}
-								{actions.map((acao) => {
+								{actions.map((acao, index) => 
 									<TableCell
-										aria-label={acao.tooltip[index]}
+										aria-label={acao.tooltip}
 										component="td"
 										style={{ width: 48, paddingLeft: 6, paddingRight: 6 }}
 										align="right"
 										size="small"
-									>
+                                        >
 										<IconButton
-											onClick={() => {
-												acao.onClick[index];
-											}}
+                                        onClick={() => acao.onClick(obj)}
 										>
-											${acao.icone[index]}
+											{acao.icone}
 										</IconButton>
-									</TableCell>;
-								})}
+									</TableCell>
+								)}
 							</TableRow>
 						);
 					})}

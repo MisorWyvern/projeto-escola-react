@@ -16,6 +16,7 @@ import {
 import { Delete, Edit } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import CustomTable from "../../components/CustomTable/CustomTable";
 import httpService from "../../services/httpService";
 import EditarPrograma from "./EditarPrograma";
 
@@ -25,28 +26,55 @@ function Programas() {
 	let { url, path } = useRouteMatch();
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const colunas = [
+		{
+			title: "Nome do Programa",
+			field: "nome",
+		},
+		{
+			title: "Data de Início",
+			field: "dataInicio",
+		},
+		{
+			title: "Data de Término",
+			field: "dataTermino",
+		},
+	];
+	const acoes = [
+		{
+			icone: <Edit/>,
+			onClick: handleEdit,
+			tooltip: "Editar Programa",
+		},
+		{
+			icone: <Delete/>,
+			onClick: handleDelete,
+			tooltip: "Deletar Programa",
+		},
+	];
 
 	useEffect(() => {
 		buscarProgramas();
 	}, []);
 
-	const handleChangePage = (event, newPage) => {
+	function handleChangePage(event, newPage){
 		setPage(newPage);
 		buscarProgramas(page, rowsPerPage);
 	};
 
-	const handleChangeRowsPerPage = (event) => {
+	function handleChangeRowsPerPage(event){
 		setRowsPerPage(+event.target.value);
 		setPage(0);
 		buscarProgramas(page, rowsPerPage);
 	};
 
-	console.log(programas);
+	//console.log(programas);
 
-	const handleDelete = (idPrograma) => {};
+	function handleDelete(idPrograma) {};
 
-	const handleEdit = (idPrograma) => {
-		history.push(`${path}/editar-programa/${idPrograma}`);
+	function handleEdit(programa){
+		console.log(programa);
+		history.push(`${path}/editar-programa/${programa.id}`);
 	};
 
 	function buscarProgramas(page = 0, pageSize = 5) {
@@ -76,77 +104,16 @@ function Programas() {
 					<Button>????</Button>
 				</ButtonGroup>
 
-				<TableContainer component={Paper}>
-					<Table aria-label="Simple Table">
-						<TableHead>
-							<TableRow>
-								<TableCell component="th">
-									<Typography variant="subtitle1">Nome do Programa</Typography>
-								</TableCell>
-								<TableCell component="th">
-									<Typography variant="subtitle1">Data de Início</Typography>
-								</TableCell>
-								<TableCell colSpan={3} component="th">
-									<Typography variant="subtitle1">Data do Término</Typography>
-								</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{programas.content.map((prog) => {
-								return (
-									<TableRow key={prog.id}>
-										<TableCell component="td">{prog.nome}</TableCell>
-										<TableCell component="td">{prog.dataInicio}</TableCell>
-										<TableCell component="td">{prog.dataTermino}</TableCell>
-										<TableCell
-											aria-label="Editar Programa"
-											component="td"
-											style={{ width: 48, paddingLeft: 6, paddingRight: 6 }}
-											align="right"
-											size="small"
-										>
-											<IconButton
-												onClick={() => {
-													handleEdit(prog.id);
-												}}
-											>
-												<Edit />
-											</IconButton>
-										</TableCell>
-										<TableCell
-											component="td"
-											style={{ width: 48, paddingLeft: 6, paddingRight: 6 }}
-											align="right"
-											size="small"
-										>
-											<IconButton
-												aria-label="Deletar Programa"
-												onClick={() => {
-													handleDelete(prog.id);
-												}}
-											>
-												<Delete />
-											</IconButton>
-										</TableCell>
-									</TableRow>
-								);
-							})}
-						</TableBody>
-						<TableFooter>
-							<TableRow>
-								<TablePagination
-									rowsPerPageOptions={[5, 10]}
-									colSpan={5}
-									count={programas.numberOfElements}
-									rowsPerPage={rowsPerPage}
-									page={page}
-									onChangePage={handleChangePage}
-									onChangeRowsPerPage={handleChangeRowsPerPage}
-								/>
-							</TableRow>
-						</TableFooter>
-					</Table>
-				</TableContainer>
+				<CustomTable
+					columns={colunas}
+					content={programas.content}
+					actions={acoes}
+					numberOfElements={programas.numberOfElements}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onChangePage={handleChangePage}
+					onChangeRowsPerPage={handleChangeRowsPerPage}
+				/>
 			</Route>
 			<Route
 				path={`${path}/editar-programa/:idPrograma`}
