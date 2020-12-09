@@ -31,7 +31,7 @@ function AdicionarAluno() {
 		httpService
 			.get("/programa")
 			.then(({ data }) => {
-				setProgramas(data);
+				setProgramas(data.content);
 			})
 			.catch((error) => {
 				console.error(error);

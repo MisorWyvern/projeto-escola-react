@@ -42,7 +42,7 @@ function EditarAluno() {
 		httpService
 			.get("programa")
 			.then(({ data }) => {
-				setProgramas(data);
+				setProgramas(data.content);
 			})
 			.catch((error) => {
 				console.error(error.message);
