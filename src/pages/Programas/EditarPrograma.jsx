@@ -5,11 +5,11 @@ import {
 	Grid,
 	Snackbar,
 	TextField,
-	Typography,
+	Typography
 } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
 import { useEffect, useState } from "react";
-import { Link, useParams, useRouteMatch } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import BotaoVoltar from "../../components/BotaoVoltar";
 import httpService from "../../services/httpService";
 import "./index.css";
@@ -22,13 +22,10 @@ function EditarPrograma() {
 		dataTermino: "",
 	});
 	const [titulo, setTitulo] = useState("Titulo");
-	const [defaultDataInicio, setDefaultDataInicio] = useState(Date("2020-01-01"));
-	const [defaultDataTermino, setDefaultDataTermino] = useState(Date("2020-01-01"));
 	const { idPrograma } = useParams();
 	const [openSnack, setOpenSnack] = useState(false);
 	const [snackMessage, setSnackMessage] = useState("");
 	const [snackSeverity, setSnackSeverity] = useState("success");
-
 
 	useEffect(() => {
 		httpService
@@ -36,8 +33,6 @@ function EditarPrograma() {
 			.then(({ data }) => {
 				setPrograma(data);
 				setTitulo(data.nome);
-				setDefaultDataInicio(data.dataInicio);
-				setDefaultDataTermino(data.dataTermino);
 			})
 			.catch((error) => {
 				console.error(error.message);
@@ -50,31 +45,43 @@ function EditarPrograma() {
 		}
 
 		setOpenSnack(false);
-    };
-    
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        console.log(programa);
-        if(programa.nome === "" || programa.dataInicio === "" || programa.dataTermino === "" || programa.dataTermino < programa.dataInicio){
-            console.log("Parou aqui");
-            return;
-        }
-    }
+	};
 
-    const classes = {
-        TituloPrincipal: {
-            marginTop: 16,
-        },
-        BotaoSubmit: {
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		console.log(programa);
+		if (
+			programa.nome === "" ||
+			programa.nome.length > 50 ||
+			programa.dataInicio === "" ||
+			programa.dataTermino === "" ||
+			programa.dataTermino < programa.dataInicio
+		) {
+			setSnackSeverity("warning");
+			setSnackMessage("Informe um Nome com no máximo 50 caracteres e Data de Término mais recente que o seu Início...")
+			setOpenSnack(true);
+			return;
+		}
 
-        }
-    }
+		httpService
+			.put(`programa/${programa.id}`, programa)
+			.then((response) => {
+				setSnackSeverity("success");
+				setSnackMessage(response.status + " - Programa editado com sucesso!");
+				setOpenSnack(true);
+				setTitulo(programa.nome);
+			})
+			.catch((error) => {
+				setSnackSeverity("error");
+				setSnackMessage(error.message);
+				setOpenSnack(true);
+			});
+	};
 
 	return (
 		<Box component="section">
 			<Snackbar
 				anchorOrigin={{ vertical: "top", horizontal: "center" }}
-				fullWidth
 				open={openSnack}
 				autoHideDuration={6000}
 				onClose={handleClose}
@@ -88,7 +95,7 @@ function EditarPrograma() {
 			</Link>
 
 			<Container maxWidth="sm">
-				<Typography style={{marginTop: 16}} component="h3" variant="h4">
+				<Typography style={{ marginTop: 16 }} component="h3" variant="h4">
 					Editar Programa "{titulo}"
 				</Typography>
 				<Grid container spacing={2}>
@@ -112,7 +119,6 @@ function EditarPrograma() {
 							variant="outlined"
 							margin="normal"
 							fullWidth
-							defaultValue={defaultDataInicio}
 							value={programa.dataInicio}
 							label="Data de Início"
 							type="date"
@@ -127,7 +133,6 @@ function EditarPrograma() {
 							variant="outlined"
 							margin="normal"
 							fullWidth
-							defaultValue={defaultDataTermino}
 							value={programa.dataTermino}
 							label="Data de Término"
 							type="date"
@@ -138,12 +143,12 @@ function EditarPrograma() {
 					</Grid>
 					<Grid item xs={12} sm={4}>
 						<Button
-							style={{padding: 16, marginTop: 16}}
+							style={{ padding: 16, marginTop: 16 }}
 							type="submit"
 							fullWidth
 							variant="contained"
-                            color="primary"
-                            onClick={handleSubmit}
+							color="primary"
+							onClick={handleSubmit}
 						>
 							Editar Programa
 						</Button>
