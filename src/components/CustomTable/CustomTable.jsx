@@ -16,7 +16,7 @@ function CustomTable({
 	columns,
 	content,
 	actions,
-	numberOfElements,
+	totalElements,
 	rowsPerPage,
 	page,
 	onChangePage,
@@ -66,9 +66,12 @@ function CustomTable({
 				<TableFooter>
 					<TableRow>
 						<TablePagination
+							nextIconButtonText="Próxima Página"
+							backIconButtonText="Página Anterior"
+							labelRowsPerPage="Linhas por página:"
 							rowsPerPageOptions={[5, 10]}
 							colSpan={columns.length + actions.length}
-							count={numberOfElements}
+							count={totalElements}
 							rowsPerPage={rowsPerPage}
 							page={page}
 							onChangePage={onChangePage}

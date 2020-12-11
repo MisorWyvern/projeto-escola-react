@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
 .container-switch{
   margin-top: calc(64px + (2 * 8px));
 }

@@ -49,7 +49,6 @@ function EditarPrograma() {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(programa);
 		if (
 			programa.nome === "" ||
 			programa.nome.length > 50 ||
@@ -95,7 +94,7 @@ function EditarPrograma() {
 			</Link>
 
 			<Container maxWidth="sm">
-				<Typography style={{ marginTop: 16 }} component="h3" variant="h4">
+				<Typography align="center" style={{ marginTop: 16 }} component="h3" variant="h4">
 					Editar Programa "{titulo}"
 				</Typography>
 				<Grid container spacing={2}>
@@ -113,7 +112,7 @@ function EditarPrograma() {
 							}}
 						/>
 					</Grid>
-					<Grid item xs={12} sm={4}>
+					<Grid item xs={12} sm={6}>
 						<TextField
 							required
 							variant="outlined"
@@ -127,7 +126,7 @@ function EditarPrograma() {
 							}}
 						/>
 					</Grid>
-					<Grid item xs={12} sm={4}>
+					<Grid item xs={12} sm={6}>
 						<TextField
 							required
 							variant="outlined"
@@ -141,9 +140,9 @@ function EditarPrograma() {
 							}}
 						/>
 					</Grid>
-					<Grid item xs={12} sm={4}>
+					<Grid item xs={12}>
 						<Button
-							style={{ padding: 16, marginTop: 16 }}
+							style={{ padding: 16 }}
 							type="submit"
 							fullWidth
 							variant="contained"

@@ -7,11 +7,12 @@ import {
 	Paper,
 	Typography,
 } from "@material-ui/core";
-import { Delete, Edit } from "@material-ui/icons";
+import { Delete, Edit, School } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import CustomTable from "../../components/CustomTable/CustomTable";
 import httpService from "../../services/httpService";
+import AdicionarProgramas from "./AdicionarProgramas";
 import EditarPrograma from "./EditarPrograma";
 
 function Programas() {
@@ -20,6 +21,7 @@ function Programas() {
 	let { path } = useRouteMatch();
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
+	const [totalElements, setTotalElements] = useState(0);
 	const [openModal, setOpenModal] = useState(false);
 	const [modalInfo, setModalInfo] = useState({ id: 0, nome: "", message: "" });
 	const [modalBody, setModalBody] = useState(<></>);
@@ -51,20 +53,14 @@ function Programas() {
 		},
 	];
 
-	useEffect(() => {
-		buscarProgramas();
-	}, []);
-
-	function handleChangePage(event, newPage) {
+	const handleChangePage = (event, newPage) => {
 		setPage(newPage);
-		buscarProgramas(page, rowsPerPage);
-	}
+	};
 
-	function handleChangeRowsPerPage(event) {
-		setRowsPerPage(+event.target.value);
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(parseInt(event.target.value, 10));
 		setPage(0);
-		buscarProgramas(page, rowsPerPage);
-	}
+	};
 
 	async function handleDelete(programa) {
 		await setModalInfo({ ...modalInfo, id: programa.id, nome: programa.nome });
@@ -96,18 +92,19 @@ function Programas() {
 			});
 	}
 
-	function buscarProgramas(page = 0, pageSize = 5) {
+	const buscarProgramas = () => {
 		httpService
 			.get("programa/", {
-				params: { page, size: pageSize },
+				params: { page, size: rowsPerPage },
 			})
 			.then(({ data }) => {
 				setProgramas(data);
+				setTotalElements(data.totalElements);
 			})
 			.catch((error) => {
 				console.error(error.message);
 			});
-	}
+	};
 
 	const modalBody1 = (
 		<Grid container spacing={2}>
@@ -165,25 +162,44 @@ function Programas() {
 		</Grid>
 	);
 
+	useEffect(() => {
+		buscarProgramas();
+	}, [page, rowsPerPage]);
+
 	return (
 		<Switch>
 			<Route exact path={path}>
+				<Typography variant="h4" component="h3" align="center">
+					<School/> <br />
+					Programas
+				</Typography>
 				<ButtonGroup
 					variant="contained"
 					color="primary"
 					aria-label="contained primary button group"
 					fullWidth
 				>
-					<Button>Adicionar Programa</Button>
-					<Button>????</Button>
-					<Button>????</Button>
+					<Button
+						onClick={() => {
+							history.push(`${path}/adicionar-programa`);
+						}}
+					>
+						Adicionar Programa
+					</Button>
+					<Button
+						onClick={() => {
+							buscarProgramas();
+						}}
+					>
+						Atualizar Tabela
+					</Button>
 				</ButtonGroup>
 
 				<CustomTable
 					columns={colunas}
 					content={programas.content}
 					actions={acoes}
-					numberOfElements={programas.numberOfElements}
+					totalElements={totalElements}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onChangePage={handleChangePage}
@@ -213,9 +229,11 @@ function Programas() {
 				</Modal>
 			</Route>
 			<Route path={`${path}/editar-programa/:idPrograma`}>
-				<EditarPrograma buscar={buscarProgramas} />
+				<EditarPrograma />
 			</Route>
-			<Route path={`${path}/adicionar-programa`} />
+			<Route path={`${path}/adicionar-programa`}>
+				<AdicionarProgramas onAction={buscarProgramas} />
+			</Route>
 		</Switch>
 	);
 }
