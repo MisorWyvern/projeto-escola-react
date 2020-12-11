@@ -13,7 +13,7 @@ import BotaoVoltar from "../../components/BotaoVoltar";
 import { useState } from "react";
 import httpService from "../../services/httpService";
 
-function AdicionarProgramas({onAction}) {
+function AdicionarProgramas({ onAction }) {
 	const [snack, setSnack] = useState({
 		message: "",
 		severity: "success",
@@ -33,7 +33,7 @@ function AdicionarProgramas({onAction}) {
 		setSnack({ ...snack, open: false });
 	};
 
-	const handleSubmit = async (event) => {
+	const handleSubmit = (event) => {
 		event.preventDefault();
 		console.log(programa);
 		if (
@@ -43,14 +43,14 @@ function AdicionarProgramas({onAction}) {
 			programa.dataTermino === "" ||
 			programa.dataTermino < programa.dataInicio
 		) {
-			console.log("Barrado")
-			await setSnack({
+			console.log("Barrado");
+			setSnack({
 				...snack,
 				severity: "warning",
 				message:
 					"Informe um Nome com no máximo 50 caracteres e Data de Término mais recente que o seu Início...",
+				open: true,
 			});
-			setSnack({ ...snack, open: true });
 			return;
 		}
 
@@ -61,15 +61,17 @@ function AdicionarProgramas({onAction}) {
 					...snack,
 					severity: "success",
 					message: response.status + " - Programa criado com sucesso!",
+					open: true,
 				});
-				setPrograma({...programa, nome: ""});
-
-
-				setSnack({ ...snack, open: true });
+				setPrograma({ ...programa, nome: "" });
 			})
 			.catch((error) => {
-				setSnack({ ...snack, severity: "error", message: error.message });
-				setSnack({ ...snack, open: true });
+				setSnack({
+					...snack,
+					severity: "error",
+					message: error.message,
+					open: true,
+				});
 			});
 	};
 
@@ -88,11 +90,16 @@ function AdicionarProgramas({onAction}) {
 			</Snackbar>
 
 			<Link to="/programas">
-				<BotaoVoltar onClick={() => onAction()}/>
+				<BotaoVoltar onClick={() => onAction()} />
 			</Link>
 
 			<Container maxWidth="sm">
-				<Typography align="center" style={{ marginTop: 16 }} component="h3" variant="h4">
+				<Typography
+					align="center"
+					style={{ marginTop: 16 }}
+					component="h3"
+					variant="h4"
+				>
 					Adicionar Programa
 				</Typography>
 				<Grid container spacing={2}>
@@ -138,7 +145,7 @@ function AdicionarProgramas({onAction}) {
 							}}
 						/>
 					</Grid>
-					<Grid item xs={12} >
+					<Grid item xs={12}>
 						<Button
 							style={{ padding: 16 }}
 							type="submit"

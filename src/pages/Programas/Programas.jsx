@@ -7,7 +7,7 @@ import {
 	Paper,
 	Typography,
 } from "@material-ui/core";
-import { Delete, Edit, School } from "@material-ui/icons";
+import { Add, Delete, Edit, School, Update } from "@material-ui/icons";
 import { useEffect, useState } from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import CustomTable from "../../components/CustomTable/CustomTable";
@@ -22,9 +22,10 @@ function Programas() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [totalElements, setTotalElements] = useState(0);
-	const [openModal, setOpenModal] = useState(false);
-	const [modalInfo, setModalInfo] = useState({ id: 0, nome: "", message: "" });
-	const [modalBody, setModalBody] = useState(<></>);
+	const [modal, setModal] = useState({
+		open: false,
+		body: <></>,
+	});
 	//Tabela
 	const colunas = [
 		{
@@ -62,10 +63,13 @@ function Programas() {
 		setPage(0);
 	};
 
-	async function handleDelete(programa) {
-		await setModalInfo({ ...modalInfo, id: programa.id, nome: programa.nome });
-		setModalBody(modalBody1);
-		setOpenModal(true);
+	function handleDelete(programa) {
+		console.log(programa);
+		setModal({
+			...modal,
+			body: <ModalBody1 info={programa} />,
+			open: true,
+		});
 	}
 
 	function handleEdit(programa) {
@@ -77,25 +81,34 @@ function Programas() {
 		httpService
 			.delete(`programa/${idPrograma}`)
 			.then((response) => {
-				setModalInfo({
-					...modalInfo,
-					message: "Programa excluido com sucesso!",
+				setModal({
+					...modal,
+					open: true,
+					body: (
+						<ModalBody2 info={{ message: "Programa excluido com sucesso!" }} />
+					),
 				});
-				setModalBody(modalBody2);
+				setProgramas({
+					...programas,
+					content: programas.content.filter((programa) => {
+						return programa.id !== idPrograma;
+					}),
+				});
+				setTotalElements(totalElements - 1);
 			})
-			.catch(async (error) => {
-				await setModalInfo({
-					...modalInfo,
-					message: "Programa já está em uso ou não foi encontrado.",
+			.catch((error) => {
+				setModal({
+					...modal,
+					open: true,
+					body: <ModalBody2 info={{message: "Programa já está em uso ou não foi encontrado."}}/>,
 				});
-				setModalBody(modalBody2);
 			});
 	}
 
-	const buscarProgramas = () => {
+	const buscarProgramas = (pagina = page, tamanho = rowsPerPage) => {
 		httpService
 			.get("programa/", {
-				params: { page, size: rowsPerPage },
+				params: { page: pagina, size: tamanho},
 			})
 			.then(({ data }) => {
 				setProgramas(data);
@@ -106,71 +119,84 @@ function Programas() {
 			});
 	};
 
-	const modalBody1 = (
-		<Grid container spacing={2}>
-			<Grid item xs={12}>
-				<Typography variant="subtitle1" align="center">
-					Deseja realmente excluir o programa "{modalInfo.nome}"?
-				</Typography>
+	function ModalBody1({ info }) {
+		return (
+			<Grid container spacing={2}>
+				<Grid item xs={12}>
+					<Typography variant="subtitle1" align="center">
+						Deseja realmente excluir o programa "{info.nome}"?
+					</Typography>
+				</Grid>
+				<Grid item xs={6}>
+					<Button
+						onClick={() => {
+							deletarPrograma(info.id);
+							console.log(modal);
+						}}
+						fullWidth
+						variant="contained"
+						color="primary"
+					>
+						Sim
+					</Button>
+				</Grid>
+				<Grid item xs={6}>
+					<Button
+						onClick={() => {
+							setModal({ ...modal, open: false });
+						}}
+						fullWidth
+						variant="contained"
+						color="secondary"
+					>
+						Não
+					</Button>
+				</Grid>
 			</Grid>
-			<Grid item xs={6}>
-				<Button
-					onClick={() => {
-						deletarPrograma(modalInfo.id);
-					}}
-					fullWidth
-					variant="contained"
-					color="primary"
-				>
-					Sim
-				</Button>
-			</Grid>
-			<Grid item xs={6}>
-				<Button
-					onClick={() => {
-						setOpenModal(false);
-					}}
-					fullWidth
-					variant="contained"
-					color="secondary"
-				>
-					Não
-				</Button>
-			</Grid>
-		</Grid>
-	);
+		);
+	}
 
-	const modalBody2 = (
-		<Grid container spacing={2}>
-			<Grid item xs={12}>
-				<Typography align="center" variant="subtitle1">
-					{modalInfo.message}
-				</Typography>
+	function ModalBody2({ info }) {
+		return (
+			<Grid container spacing={2}>
+				<Grid item xs={12}>
+					<Typography align="center" variant="subtitle1">
+						{info.message}
+					</Typography>
+				</Grid>
+				<Grid item xs={12}>
+					<Button
+						onClick={() => {
+							setModal({ ...modal, open: false });
+						}}
+						fullWidth
+						variant="contained"
+						color="primary"
+					>
+						Fechar
+					</Button>
+				</Grid>
 			</Grid>
-			<Grid item xs={12}>
-				<Button
-					onClick={() => {
-						setOpenModal(false);
-					}}
-					fullWidth
-					variant="contained"
-					color="primary"
-				>
-					Fechar
-				</Button>
-			</Grid>
-		</Grid>
-	);
+		);
+	}
 
 	useEffect(() => {
 		buscarProgramas();
+		console.log("didMount");
+	}, []);
+
+	useEffect(() => {
+		buscarProgramas();
+		console.log("update page or rowsperpage");
 	}, [page, rowsPerPage]);
+
+	useEffect(() => () => console.log("unmount"), []);
 
 	return (
 		<Switch>
 			<Route exact path={path}>
 				<Typography variant="h4" component="h3" align="center">
-					<School/> <br />
+					<School /> <br />
 					Programas
 				</Typography>
 				<ButtonGroup
@@ -180,6 +206,7 @@ function Programas() {
 					fullWidth
 				>
 					<Button
+						startIcon={<Add />}
 						onClick={() => {
 							history.push(`${path}/adicionar-programa`);
 						}}
@@ -187,6 +214,7 @@ function Programas() {
 						Adicionar Programa
 					</Button>
 					<Button
+						startIcon={<Update />}
 						onClick={() => {
 							buscarProgramas();
 						}}
@@ -207,9 +235,9 @@ function Programas() {
 				/>
 
 				<Modal
-					open={openModal}
+					open={modal.open}
 					onClose={() => {
-						setOpenModal(false);
+						setModal({ ...modal, open: false });
 					}}
 					aria-labelledby="Deletar Programa"
 					aria-describedby="Confirmação para deletar um Programa"
@@ -224,7 +252,7 @@ function Programas() {
 							alignItems: "center",
 						}}
 					>
-						{modalBody}
+						{modal.body}
 					</Container>
 				</Modal>
 			</Route>
