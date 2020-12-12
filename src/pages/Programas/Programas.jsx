@@ -100,7 +100,13 @@ function Programas() {
 				setModal({
 					...modal,
 					open: true,
-					body: <ModalBody2 info={{message: "Programa já está em uso ou não foi encontrado."}}/>,
+					body: (
+						<ModalBody2
+							info={{
+								message: "Programa já está em uso ou não foi encontrado.",
+							}}
+						/>
+					),
 				});
 			});
 	}
@@ -108,7 +114,7 @@ function Programas() {
 	const buscarProgramas = (pagina = page, tamanho = rowsPerPage) => {
 		httpService
 			.get("programa/", {
-				params: { page: pagina, size: tamanho},
+				params: { page: pagina, size: tamanho },
 			})
 			.then(({ data }) => {
 				setProgramas(data);
@@ -193,76 +199,68 @@ function Programas() {
 	useEffect(() => () => console.log("unmount"), []);
 
 	return (
-		<Switch>
-			<Route exact path={path}>
-				<Typography variant="h4" component="h3" align="center">
-					<School /> <br />
-					Programas
-				</Typography>
-				<ButtonGroup
-					variant="contained"
-					color="primary"
-					aria-label="contained primary button group"
-					fullWidth
-				>
-					<Button
-						startIcon={<Add />}
-						onClick={() => {
-							history.push(`${path}/adicionar-programa`);
-						}}
-					>
-						Adicionar Programa
-					</Button>
-					<Button
-						startIcon={<Update />}
-						onClick={() => {
-							buscarProgramas();
-						}}
-					>
-						Atualizar Tabela
-					</Button>
-				</ButtonGroup>
-
-				<CustomTable
-					columns={colunas}
-					content={programas.content}
-					actions={acoes}
-					totalElements={totalElements}
-					rowsPerPage={rowsPerPage}
-					page={page}
-					onChangePage={handleChangePage}
-					onChangeRowsPerPage={handleChangeRowsPerPage}
-				/>
-
-				<Modal
-					open={modal.open}
-					onClose={() => {
-						setModal({ ...modal, open: false });
+		<>
+			<Typography variant="h4" component="h3" align="center">
+				<School /> <br />
+				Programas
+			</Typography>
+			<ButtonGroup
+				variant="contained"
+				color="primary"
+				aria-label="contained primary button group"
+				fullWidth
+			>
+				<Button
+					startIcon={<Add />}
+					onClick={() => {
+						history.push(`${path}/adicionar-programa`);
 					}}
-					aria-labelledby="Deletar Programa"
-					aria-describedby="Confirmação para deletar um Programa"
 				>
-					<Container
-						component={Paper}
-						style={{
-							width: 200,
-							height: 200,
-							display: "flex",
-							marginTop: "10%",
-							alignItems: "center",
-						}}
-					>
-						{modal.body}
-					</Container>
-				</Modal>
-			</Route>
-			<Route path={`${path}/editar-programa/:idPrograma`}>
-				<EditarPrograma />
-			</Route>
-			<Route path={`${path}/adicionar-programa`}>
-				<AdicionarProgramas onAction={buscarProgramas} />
-			</Route>
-		</Switch>
+					Adicionar Programa
+				</Button>
+				<Button
+					startIcon={<Update />}
+					onClick={() => {
+						buscarProgramas();
+					}}
+				>
+					Atualizar Tabela
+				</Button>
+			</ButtonGroup>
+
+			<CustomTable
+				columns={colunas}
+				content={programas.content}
+				actions={acoes}
+				totalElements={totalElements}
+				rowsPerPage={rowsPerPage}
+				page={page}
+				onChangePage={handleChangePage}
+				onChangeRowsPerPage={handleChangeRowsPerPage}
+			/>
+
+			<Modal
+				open={modal.open}
+				onClose={() => {
+					setModal({ ...modal, open: false });
+				}}
+				aria-labelledby="Deletar Programa"
+				aria-describedby="Confirmação para deletar um Programa"
+			>
+				<Container
+					component={Paper}
+					style={{
+						width: 200,
+						height: 200,
+						display: "flex",
+						marginTop: "10%",
+						alignItems: "center",
+					}}
+				>
+					{modal.body}
+				</Container>
+			</Modal>
+		</>
 	);
 }
 
