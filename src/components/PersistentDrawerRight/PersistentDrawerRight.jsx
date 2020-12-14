@@ -17,16 +17,14 @@ import {
 	PeopleAlt,
 	Receipt,
 	School,
-	Timeline,
+	Timeline
 } from "@material-ui/icons";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import MenuIcon from "@material-ui/icons/Menu";
 import clsx from "clsx";
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import Alunos from "../../pages/Alunos";
-import HomePage from "../../pages/Home";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 

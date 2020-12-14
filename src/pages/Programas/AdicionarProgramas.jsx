@@ -35,7 +35,6 @@ function AdicionarProgramas({ onAction }) {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		console.log(programa);
 		if (
 			programa.nome === "" ||
 			programa.nome.length > 50 ||
@@ -43,7 +42,6 @@ function AdicionarProgramas({ onAction }) {
 			programa.dataTermino === "" ||
 			programa.dataTermino < programa.dataInicio
 		) {
-			console.log("Barrado");
 			setSnack({
 				...snack,
 				severity: "warning",
@@ -153,6 +151,7 @@ function AdicionarProgramas({ onAction }) {
 							variant="contained"
 							color="primary"
 							onClick={handleSubmit}
+							autoFocus
 						>
 							Adicionar Programa
 						</Button>

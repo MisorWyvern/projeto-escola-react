@@ -1,20 +1,19 @@
 import { Container, createMuiTheme } from "@material-ui/core";
+import { deepPurple, purple, red } from "@material-ui/core/colors";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { deepPurple, red } from "@material-ui/core/colors";
-import { Mood } from "@material-ui/icons";
 import { Fragment } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import PersistentDrawerRight from "./components/PersistentDrawerRight/PersistentDrawerRight";
 import Alunos from "./pages/Alunos";
-import HomePage from "./pages/Home";
-import Programas from "./pages/Programas";
 import AdicionarAluno from "./pages/Alunos/AdicionarAluno";
 import EditarAluno from "./pages/Alunos/EditarAluno";
+import HomePage from "./pages/Home";
+import Programas from "./pages/Programas";
 import AdicionarProgramas from "./pages/Programas/AdicionarProgramas";
 import EditarPrograma from "./pages/Programas/EditarPrograma";
 
 const theme = createMuiTheme({
-	pallete: {
+	palette: {
 		primary: {
 			light: deepPurple[300],
 			main: deepPurple[600],
@@ -33,10 +32,10 @@ function App() {
 
 	return (
 		<Fragment>
-			<Router>
-				<PersistentDrawerRight drawerTitle={drawerTitle} />
-				<Container className="container-switch">
-					<ThemeProvider theme={theme}>
+			<ThemeProvider theme={theme}>
+				<Router>
+					<PersistentDrawerRight drawerTitle={drawerTitle} />
+					<Container className="container-switch">
 						<Switch>
 							<Route path="/mentores"></Route>
 							<Route path="/disciplinas"></Route>
@@ -62,9 +61,9 @@ function App() {
 							<Route path="/alunos" component={Alunos} />
 							<Route path="/" component={HomePage} />
 						</Switch>
-					</ThemeProvider>
-				</Container>
-			</Router>
+					</Container>
+				</Router>
+			</ThemeProvider>
 		</Fragment>
 	);
 }

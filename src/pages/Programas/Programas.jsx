@@ -5,15 +5,13 @@ import {
 	Grid,
 	Modal,
 	Paper,
-	Typography,
+	Typography
 } from "@material-ui/core";
 import { Add, Delete, Edit, School, Update } from "@material-ui/icons";
 import { useEffect, useState } from "react";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import CustomTable from "../../components/CustomTable/CustomTable";
 import httpService from "../../services/httpService";
-import AdicionarProgramas from "./AdicionarProgramas";
-import EditarPrograma from "./EditarPrograma";
 
 function Programas() {
 	const [programas, setProgramas] = useState({ content: [] });
@@ -64,7 +62,6 @@ function Programas() {
 	};
 
 	function handleDelete(programa) {
-		console.log(programa);
 		setModal({
 			...modal,
 			body: <ModalBody1 info={programa} />,
@@ -73,7 +70,6 @@ function Programas() {
 	}
 
 	function handleEdit(programa) {
-		console.log(programa);
 		history.push(`${path}/editar-programa/${programa.id}`);
 	}
 
@@ -137,7 +133,6 @@ function Programas() {
 					<Button
 						onClick={() => {
 							deletarPrograma(info.id);
-							console.log(modal);
 						}}
 						fullWidth
 						variant="contained"
@@ -188,15 +183,9 @@ function Programas() {
 
 	useEffect(() => {
 		buscarProgramas();
-		console.log("didMount");
-	}, []);
-
-	useEffect(() => {
-		buscarProgramas();
-		console.log("update page or rowsperpage");
 	}, [page, rowsPerPage]);
 
-	useEffect(() => () => console.log("unmount"), []);
+	//useEffect(() => () => console.log("unmount"), []);
 
 	return (
 		<>
