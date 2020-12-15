@@ -74,7 +74,7 @@ function AdicionarProgramas({ onAction }) {
 	};
 
 	return (
-		<Box>
+		<Box component="section">
 			<Snackbar
 				anchorOrigin={{ vertical: "top", horizontal: "center" }}
 				fullWidth
@@ -88,7 +88,7 @@ function AdicionarProgramas({ onAction }) {
 			</Snackbar>
 
 			<Link to="/programas">
-				<BotaoVoltar onClick={() => onAction()} />
+				<BotaoVoltar />
 			</Link>
 
 			<Container maxWidth="sm">

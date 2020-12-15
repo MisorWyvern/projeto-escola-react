@@ -6,6 +6,7 @@ import AdicionarProgramas from "../pages/Programas/AdicionarProgramas";
 import EditarPrograma from "../pages/Programas/EditarPrograma";
 import HomePage from "../pages/Home";
 import { Route } from "react-router-dom";
+import VisualizarPrograma from "../pages/Programas/VisualizarPrograma";
 
 function RouteConfig() {
 
@@ -35,6 +36,10 @@ function RouteConfig() {
             component: <EditarPrograma/>,
         },
         {
+            path: "/programas/view/:idPrograma",
+            component: <VisualizarPrograma />,
+        },
+        {
             path: "/programas",
             component: <Programas />,
         },
@@ -57,8 +62,8 @@ function RouteConfig() {
     ];
 
     return(
-        routes.map((route) => {
-            return <Route path={route.path}>{route.component}</Route>;
+        routes.map((route, index) => {
+            return <Route key={index} exact path={route.path}>{route.component}</Route>;
         })
     );
     

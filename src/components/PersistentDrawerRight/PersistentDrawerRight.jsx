@@ -159,8 +159,8 @@ export default function PersistentDrawerRight(props) {
 				<Divider />
 				<List>
 					{["Alunos", "Mentores", "Programas"].map((text, index) => (
-						<Link to={linksSuperior[index]}>
-							<ListItem button key={text}>
+						<Link key={text} to={linksSuperior[index]}>
+							<ListItem button >
 								<ListItemIcon>{listaIconesSuperior[index]}</ListItemIcon>
 								<ListItemText primary={text} />
 							</ListItem>
@@ -171,8 +171,8 @@ export default function PersistentDrawerRight(props) {
 				<List>
 					{["Disciplinas", "Avaliações", "Tipos de Avaliações"].map(
 						(text, index) => (
-							<Link to={linksInferior[index]}>
-								<ListItem button key={text}>
+							<Link key={text} to={linksInferior[index]}>
+								<ListItem button >
 									<ListItemIcon>{listaIconesInferior[index]}</ListItemIcon>
 									<ListItemText primary={text} />
 								</ListItem>
