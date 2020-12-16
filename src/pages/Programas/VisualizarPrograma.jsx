@@ -1,5 +1,4 @@
 import {
-	Box,
 	Button,
 	ButtonGroup,
 	Grid,
@@ -7,11 +6,11 @@ import {
 	TableBody,
 	TableCell,
 	TableRow,
-	Typography,
+	Typography
 } from "@material-ui/core";
 import { Add, Delete } from "@material-ui/icons";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 import CustomAccordion from "../../components/CustomAccordion";
 import CustomTable from "../../components/CustomTable/CustomTable";
 import PageHeader from "../../components/PageHeader";
@@ -19,12 +18,14 @@ import httpService from "../../services/httpService";
 
 function VisualizarPrograma() {
 	const { idPrograma } = useParams();
+	const history = useHistory();
+	let { url } = useRouteMatch();
 	const [programa, setPrograma] = useState([
 		{
 			id: 0,
 			nome: "",
-			dataInicio: "",
-			dataTermino: "",
+			dataInicio: "0000-00-00",
+			dataTermino: "0000-00-00",
 		},
 	]);
 	const colunasMentores = [
@@ -45,6 +46,7 @@ function VisualizarPrograma() {
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(5);
 	const [totalElements, setTotalElements] = useState(0);
+	
 
 	useEffect(() => {
 		buscarPrograma(idPrograma);
@@ -98,7 +100,6 @@ function VisualizarPrograma() {
 	};
 
 	return (
-		<Box component="section">
 			<PageHeader
 				title={`Programa: ${programa.nome !== undefined ? programa.nome : ""}`}
 				linkVoltar={"/programas"}
@@ -127,7 +128,7 @@ function VisualizarPrograma() {
 							</Table>
 						</CustomAccordion>
 						<Typography style={{ padding: 8 }} variant="h5" component="h4">
-							Mentores
+							Mentores do "{programa.nome}"
 						</Typography>
 						<ButtonGroup
 							style={{ marginBottom: 8 }}
@@ -136,10 +137,14 @@ function VisualizarPrograma() {
 							aria-label="contained primary button group"
 							fullWidth
 						>
-							<Button startIcon={<Add />} onClick={() => {}}>
+							<Button startIcon={<Add />} onClick={() => {
+								history.push(`${url}/add-mentor`);
+							}}>
 								Adicionar Mentor
 							</Button>
-							<Button startIcon={<Delete />} onClick={() => {}}>
+							<Button startIcon={<Delete />} onClick={() => {
+								history.push(`${url}/delete-mentor`);
+							}}>
 								Excluir Mentor
 							</Button>
 						</ButtonGroup>
@@ -151,11 +156,10 @@ function VisualizarPrograma() {
 							page={page}
 							onChangePage={handleChangePage}
 							onChangeRowsPerPage={handleChangeRowsPerPage}
-						></CustomTable>
+						/>
 					</Grid>
 				</Grid>
 			</PageHeader>
-		</Box>
 	);
 }
 

@@ -7,6 +7,7 @@ import EditarPrograma from "../pages/Programas/EditarPrograma";
 import HomePage from "../pages/Home";
 import { Route } from "react-router-dom";
 import VisualizarPrograma from "../pages/Programas/VisualizarPrograma";
+import AddMentorToPrograma from "../pages/Programas/AddMentorToPrograma";
 
 function RouteConfig() {
 
@@ -36,8 +37,16 @@ function RouteConfig() {
             component: <EditarPrograma/>,
         },
         {
+            path: "/programas/view/:idPrograma/delete-mentor",
+            component: <></>,
+        },
+        {
+            path: "/programas/view/:idPrograma/add-mentor",
+            component: <AddMentorToPrograma />,
+        },
+        {
             path: "/programas/view/:idPrograma",
-            component: <VisualizarPrograma />,
+            component: <VisualizarPrograma/>,
         },
         {
             path: "/programas",
